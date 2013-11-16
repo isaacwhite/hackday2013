@@ -144,8 +144,6 @@ function handleNoGeolocation(errorFlag) {
 }
 
 function geocode_addr(event_title,street_addr, city_state, lat_init, lon_init){
-
-
  var geocode_obj= $.getJSON("http://maps.googleapis.com/maps/api/geocode/json?address="+street_addr+","+city_state+"&sensor=true", function(data){
     //var geocode_obj=data;
    //  var lat=data. 
