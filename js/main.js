@@ -36,6 +36,15 @@ HD2013.FoodItem = function (name,calories,url) {
 	this.url = url;
 }
 
+HD2013.Event = function (name,url,lat,lng,tel,desc) {
+	this.name = name;
+	this.url = url;
+	this.lat = lat;
+	this.lng = lng;
+	this.tel = tel;
+	this.desc = desc;
+}
+
 HD2013.calculateDistance = function (calories,type) {
 	var distance;
 	if (type === "walk") {
@@ -58,8 +67,25 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	}
 	url += "&ll=" + startLat + "%2C" + startLng + "&radius=" + distanceInMeters + "&api-key=" + apiKey;
 
+	var currentEvents = [];
 	var response = $.get(url, function (data) {
 		var jsonObj = response.responseJSON;
-		console.log(jsonObj);
+		var results = jsonObj.results;
+		for (var i = 0; i< results.length; i++) {
+			var thisResult = results[i];
+
+			var name = thisResult.event_name;
+			var url = thisResult.event_detail_url;
+			var lat = thisResult.geocode_latitude;
+			var lng = thisResult.geocode_longitude;
+			var tel = thisResult.telephone;
+			var desc = thisResult.web_description;
+
+			var eventObj = new HD2013.Event(name,url,lat,lng,tel,desc);
+			currentEvents.push(eventObj);
+		}
+		HD2013.currentEvents = currentEvents;
 	});
 }
+
+HD2013.getEvents(1700,40.756146,-73.99021);
