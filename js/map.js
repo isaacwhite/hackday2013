@@ -13,7 +13,7 @@ function initialize() {
     navigator.geolocation.getCurrentPosition(function(position) {
       var lat=position.coords.latitude;
       var lon= position.coords.longitude;
-      var pos = new google.maps.LatLng(lat, lon);
+      var initial_loc = new google.maps.LatLng(lat, lon);
 
 
       add_event_marker("Your current location",lat, lon);
@@ -23,7 +23,7 @@ function initialize() {
       //   content: 'Location found using HTML5.'
       // });
 
-      map.setCenter(pos);
+      map.setCenter(initial_loc);
     }, function() {
       handleNoGeolocation(true);
     });
