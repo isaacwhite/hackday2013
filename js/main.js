@@ -25,7 +25,6 @@ HD2013.getFoodInfo = function () {
 			var calories = $(data).find("#label_sorting_title .center_text .right_text.tx_3")[0];
 			var calorieCount = parseInt($(calories).contents()[0]['data']);
 			HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
-			// console.log(HD2013.foodItemList);
 		})
 	});
 }
@@ -89,3 +88,97 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 }
 
 HD2013.getEvents(1700,40.756146,-73.99021);
+
+$(function() {
+	$("#submit-button").click(function(e) {
+		if (HD2013.loading === 0) {
+			var search = $("#search-box").val();
+			var searchString = search;
+			var moreOptions = $('.more-options');
+			if (moreOptions.hasClass("active")) {
+				var startDate = $('#start-date');
+				var endDate = $('#end-date');
+				var location = $('#location');
+				var addQuery = "";
+				
+				if(!(endDate.hasClass('empty'))) {
+					var parsedEnd = "" + endDate.val().substr(6);
+					parsedEnd += "-" + endDate.val().substr(0,5).replace("/","-");
+					addQuery += " until:" + parsedEnd;
+					// options.until = parsedEnd;
+				}
+				if(!(startDate.hasClass('empty'))) {
+					var parsedStart = "" + startDate.val().substr(6);
+					parsedStart += "-" + startDate.val().substr(0,5).replace("/","-");
+					addQuery += " since:" + parsedStart;
+					// options.since = parsedStart;
+				}
+				if(!(location.hasClass('empty'))) {
+					var geocodeQuery = location.val();
+					if(geocodeQuery === "") {
+						geocodeQuery = undefined;
+					}
+				}
+
+				search += addQuery;
+
+			};//no else
+			
+			// options.q = search;
+			// options.count = 50;
+
+			// console.log(options);
+
+			if (search === "") {
+				$("#search-box").val("Please enter something to search");
+			} else if (searchString === "Please enter something to search") {
+				//do nothing
+			} else {
+				if (HD2013.firstSearch === 0 ) {
+					$('.tweet').remove();
+				};
+				try {
+					HD2013.getResults(client, options,geocodeQuery);
+					HD2013.searches.push(search);
+					
+				} catch(err) {
+					console.warn(err);
+					$('.search-contain img').remove();
+					$('.results-area').html(HD2013.errorText).append("<p>" + err.toString() + "</p>");
+
+				}
+			};
+			
+		} else {
+			// console.log("extra click, still loading");
+			
+		}
+		
+		e.preventDefault();
+	});
+
+	$(".more-options h5.want-more").click(function() {
+			var moreOptions = $(".more-options");
+		if (!(moreOptions.hasClass("active")) ) {
+				var datePickOptions = {
+					onSelect: function() {
+					$(this).removeClass("empty");
+					}
+				};
+				moreOptions.addClass("active");
+				$(this).text("Hide these options");
+
+				$("#start-date").datepicker(datePickOptions).addClass("empty").val("Start date");
+				$("#end-date").datepicker(datePickOptions).addClass("empty").val("End date");
+				$("#location").addClass("empty").val("Search for a location").click(function() {
+					$(this).val("").removeClass("empty");
+				});
+			} else {
+				moreOptions.removeClass("active");
+				$(this).text("Want to use a different date range?");
+				$("#start-date").addClass("empty").val("");
+				$("#end-date").addClass("empty").val("");
+				$("#location").addClass("empty").val("");
+			};
+		});
+});
