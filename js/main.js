@@ -13,7 +13,8 @@ HD2013.getJSONObj = function (url, property) {
 
 HD2013.getFoodInfo = function () {
 	var sessionID = HD2013.sessionID;
-	var url = "http://api.foodessentials.com/label_summary?u=016000264601&sid=" + HD2013.sessionID + " &appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
+	var url = "http://api.foodessentials.com/label_summary?u=016000264601&sid=" + 
+		HD2013.sessionID + " &appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
 	var response = $.get(url, function (data) {
 		var jsonObj = response.responseJSON;
 		var foodName = jsonObj.product_name;
@@ -90,7 +91,21 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 HD2013.getEvents(1700,40.756146,-73.99021);
 
 $(function() {
-	$("#submit-button").click(function(e) {
+
+	$("#search-box").val("Your location");
+	$("#bar-code").val("UPC code");
+	$("#bar-code").click(function() {
+		if ($(this).val() === "UPC code") { 
+			$(this).val(""); 
+		} 
+	});
+	$("#search-box").click(function() {
+		if ($(this).val() === "Your location") { 
+			$(this).val(""); 
+		} 
+	});
+
+	$("#submit-button").click( function (e) {
 		if (HD2013.loading === 0) {
 			var search = $("#search-box").val();
 			var searchString = search;
@@ -98,7 +113,6 @@ $(function() {
 			if (moreOptions.hasClass("active")) {
 				var startDate = $('#start-date');
 				var endDate = $('#end-date');
-				var location = $('#location');
 				var addQuery = "";
 				
 				if(!(endDate.hasClass('empty'))) {
@@ -112,12 +126,6 @@ $(function() {
 					parsedStart += "-" + startDate.val().substr(0,5).replace("/","-");
 					addQuery += " since:" + parsedStart;
 					// options.since = parsedStart;
-				}
-				if(!(location.hasClass('empty'))) {
-					var geocodeQuery = location.val();
-					if(geocodeQuery === "") {
-						geocodeQuery = undefined;
-					}
 				}
 
 				search += addQuery;
@@ -134,12 +142,8 @@ $(function() {
 			} else if (searchString === "Please enter something to search") {
 				//do nothing
 			} else {
-				if (HD2013.firstSearch === 0 ) {
-					$('.tweet').remove();
-				};
 				try {
-					HD2013.getResults(client, options,geocodeQuery);
-					HD2013.searches.push(search);
+					//perform a search.
 					
 				} catch(err) {
 					console.warn(err);
@@ -170,15 +174,11 @@ $(function() {
 
 				$("#start-date").datepicker(datePickOptions).addClass("empty").val("Start date");
 				$("#end-date").datepicker(datePickOptions).addClass("empty").val("End date");
-				$("#location").addClass("empty").val("Search for a location").click(function() {
-					$(this).val("").removeClass("empty");
-				});
 			} else {
 				moreOptions.removeClass("active");
 				$(this).text("Want to use a different date range?");
 				$("#start-date").addClass("empty").val("");
 				$("#end-date").addClass("empty").val("");
-				$("#location").addClass("empty").val("");
 			};
 		});
 });

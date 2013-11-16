@@ -80,6 +80,14 @@ h2 {
 html {
     background-color: black;
 }
+.main-container>form {
+    padding-top: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
 .general {
     display: block;
     margin: 0 auto;
@@ -92,15 +100,20 @@ html {
     height: 3rem;
     position: relative;
 }
-#search-box {
+#search-box,
+#bar-code {
     border-radius: .5rem;
     font-size: 2rem;
     padding: .25rem;
     border: none;
     margin: 0;
-    width: 100%;
+    width: 70%;
     height:100%;
-    position: absolute;
+    float:left;
+}
+#bar-code {
+    width: 28%;
+    margin-right: 2%;
 }
 
 #submit-button,
@@ -236,11 +249,15 @@ html {
     left: 1rem;
 }
 
-.more-options {
+.more-options,
+form .general {
     max-width: 70rem;
     margin: 0 auto;
     padding: 0 1rem;
     color:white;
+}
+form .general {
+    color: black;
 }
 .more-options h5:hover {
     cursor: pointer;
@@ -263,6 +280,7 @@ html {
     float: left;
     width: 50%;
     margin-top: 1rem;
+    margin-left: 1rem;
 }
 .date-range input {
     width: 48.5%;
@@ -275,12 +293,6 @@ html {
 }
 #start-date {
     margin-right: 3%;
-}
-.location-picker {
-    width: 50%;
-    float: left;
-    margin-top: 1rem;
-    padding-left: 1rem;
 }
 .location-picker input {
     width: 100%;
@@ -304,6 +316,7 @@ html {
 }
 h5 {
     display: inline-block;
+    float: left;
 }
 
 div.more-options {
@@ -337,10 +350,15 @@ div li:hover {
 }
 
 #map-canvas{
-height:80%;
-width:60%;
+    height: 100%;
+    width: 100%;
+    position:absolute;
 }
 .map-container{
-
-  height:500px;
+    width: 100%;
+    left: 0;
+    z-index: 1;
+    position: absolute;
+    top: 8.875rem;
+    bottom: 0;
 }
