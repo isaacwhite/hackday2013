@@ -335,3 +335,12 @@ div li:hover {
 .searches h3 {
     font-size: 1.5rem;
 }
+
+#map-canvas{
+height:80%;
+width:60%;
+}
+.map-container{
+
+  height:500px;
+}
