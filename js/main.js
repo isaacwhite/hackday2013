@@ -105,6 +105,9 @@ HD2013.getEvents(1700,40.756146,-73.99021);
 var lat_init;
 var lon_init;
 var map;
+HD2013.markerList = [];
+directionsDisplay = new google.maps.DirectionsRenderer();
+
 function initialize() {
   var mapOptions = {
     zoom: 15,
@@ -122,8 +125,7 @@ function initialize() {
        position: new google.maps.LatLng(lat_init, lon_init),
        map: map
       });
-
-
+      HD2013.markerList.push(marker);
       add_event_marker("Your current location",lat_init, lon_init);
       map.setCenter(initial_loc);
       geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
@@ -150,6 +152,7 @@ function handleNoGeolocation(errorFlag) {
   // var infowindow = new google.maps.InfoWindow(options);
   initial_loc=options.position;
   map.setCenter(initial_loc);
+
   geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
   geocode_addr("10 Columbus Circle New York, NY", lat_init, lon_init);
 
@@ -179,9 +182,8 @@ function add_event_marker(lat, lon){
     position: new google.maps.LatLng(lat, lon),
     map: map
 });
-
    google.maps.event.addListener(marker, 'click', function() {
-    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(null);
     directionsDisplay.setMap(map);
     var directionsService = new google.maps.DirectionsService();
     var request = {
@@ -225,31 +227,6 @@ function add_event_marker(lat, lon){
       }
     });
   }
-
-
-  function draw_directions(destinationMarker){
-    directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(map);
-    var directionsService = new google.maps.DirectionsService();
-    var request = {
-        origin: new google.maps.LatLng(lat_init, lon_init),
-        destination: destinationMarker,
-        travelMode: google.maps.TravelMode.WALKING,
-       unitSystem: google.maps.UnitSystem.IMPERIAL
-    };
-    directionsService.route(request, function(response, status) {
-      if (status == google.maps.DirectionsStatus.OK) {
-       // console.log(response);
-
-       // var distance = response.routes[0].legs[0].distance.text;
-      //  console.log(distance);
-        directionsDisplay.setDirections(response);
-       // $(".duration").append(response.routes[0].legs[0].duration.text);
-      }
-    });
-
-  }
-  
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
