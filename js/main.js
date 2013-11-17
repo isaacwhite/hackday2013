@@ -127,10 +127,12 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 
 					var eventObj = new HD2013.Event(name,url,lat,lng,tel,desc);
 					currentEvents.push(eventObj);
+
 				}
 			}
 			HD2013.currentEvents = currentEvents;
 			console.log(currentEvents);
+      draw_event_markers(currentEvents);
 		});
 	});
 }
@@ -157,17 +159,12 @@ function initialize() {
        position: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
        map: map
       });
-<<<<<<< HEAD
       HD2013.markerList.push(marker);
-      add_event_marker("Your current location",lat_init, lon_init);
-=======
-
 
       add_event_marker("Your current location",HD2013.startCoord.lat, HD2013.startCoord.lon);
->>>>>>> 6532899bbde6632953f28a46e3be29c53f98c985
       map.setCenter(initial_loc);
-      geocode_addr("4 Times Square New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
-      geocode_addr("10 Columbus Circle New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
+  //    geocode_addr("4 Times Square New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
+  //    geocode_addr("10 Columbus Circle New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
 
       console.log(initial_loc);
     }, function() {
@@ -191,12 +188,14 @@ function handleNoGeolocation(errorFlag) {
   initial_loc=options.position;
   map.setCenter(initial_loc);
 
-  geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
-  geocode_addr("10 Columbus Circle New York, NY", lat_init, lon_init);
+//  geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
+//  geocode_addr("10 Columbus Circle New York, NY", lat_init, lon_init);
 
 
 
 }
+
+
 // geocodes the address and adds markers and directions of the locations
 function geocode_addr(event_addr){
  var geocode_obj= $.getJSON("http://maps.googleapis.com/maps/api/geocode/json?address="+event_addr+"&sensor=true", function(data){
@@ -208,14 +207,13 @@ function geocode_addr(event_addr){
     console.log(lat);
     console.log(lon);
     add_event_marker(lat, lon);
-    add_directions(lat,lon, lat_init, lon_init);
+    add_directions(lat,lon);
     //  return data;
   });
 }
 
 
-function add_event_marker(lat, lon){
-
+function add_event_marker(lat, lon, eventsObj){
   var marker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lon),
     map: map
@@ -225,7 +223,7 @@ function add_event_marker(lat, lon){
     directionsDisplay.setMap(map);
     var directionsService = new google.maps.DirectionsService();
     var request = {
-        origin: new google.maps.LatLng(lat_init, lon_init),
+        origin: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
         destination: new google.maps.LatLng(lat, lon),
         travelMode: google.maps.TravelMode.WALKING,
        unitSystem: google.maps.UnitSystem.IMPERIAL
@@ -239,6 +237,17 @@ function add_event_marker(lat, lon){
     });
    });
 
+   google.maps.event.addListener(marker, 'hover', function() {
+     console.log("hovered");
+     var infowindow = new google.maps.InfoWindow({
+     map: map,
+     position: new google.maps.LatLng(lat, lon),
+     content: eventsObj.name+'<br>'+'<a href="'+eventsObj.url+'"> More info</a>'
+     });
+
+   });
+
+  
   marker.setMap(map);
 }
   // add estimated time it takes to get to neighborhood, using Gmaps transit locations
@@ -289,9 +298,16 @@ function add_event_marker(lat, lon){
     });
 
   }
-  
 
->>>>>>> 6532899bbde6632953f28a46e3be29c53f98c985
+  function draw_event_markers(eventsArray){
+  
+  for (var i=0; i<eventsArray.length; i++){
+  console.log(eventsArray[i].lng);
+  add_event_marker(eventsArray[i].lat,eventsArray[i].lng, eventsArray[i]);
+  add_directions(eventsArray[i].lat,eventsArray[i].lng);
+  }
+}
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
 $(function() {
