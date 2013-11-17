@@ -1,33 +1,48 @@
 var HD2013 = {};
 HD2013.foodItemList = [];
+HD2013.loading = 0;
 
-HD2013.getJSONObj = function (url, property) {
-	var response = $.get(url, function (data) {
-		var jsonObj = response.responseJSON;
-		var returnVal = jsonObj[property];
-		HD2013.sessionID = returnVal;
-		var requestVars = ["url","product_name"];
-		HD2013.getFoodInfo();
-	});
-}
-
-HD2013.getFoodInfo = function () {
-	var sessionID = HD2013.sessionID;
-	var url = "http://api.foodessentials.com/label_summary?u=016000264601&sid=" + 
-		HD2013.sessionID + " &appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
-	var response = $.get(url, function (data) {
-		var jsonObj = response.responseJSON;
-		var foodName = jsonObj.product_name;
-		var productUrl = jsonObj.url;
-
-		var html = $.get(productUrl, function (data) {
+HD2013.getFoodInfo = function (upc) {
+	function getDetails(upc) {
+		var sessionID = HD2013.sessionID;
+		console.log(sessionID);
+		http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
+		var url = "http://api.foodessentials.com/label_summary?u=" + upc + "&sid=" + sessionID + "&appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
+		var response = $.get(url, function (data) {
+			// console.log(url);
+			console.log(url);
+			console.log(data);
+			var jsonObj = response.responseJSON;
+			var foodName = jsonObj.product_name;
+			var productUrl = jsonObj.url;
+			var html = $.get(productUrl, function (data) {
 			//data is the html response
-			HD2013.testData = data;
-			var calories = $(data).find("#label_sorting_title .center_text .right_text.tx_3")[0];
-			var calorieCount = parseInt($(calories).contents()[0]['data']);
-			HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
-		})
-	});
+				console.log("requesting http data");
+				HD2013.testData = data;
+				var calories = $(data).find("#label_sorting_title .center_text .right_text.tx_3")[0];
+				var calorieCount = $(calories).contents()[0]['data'];
+				if (calorieCount === "n/a") {
+					calorieCount = 0;
+				} else {
+					calorieCount = parseInt(calorieCount);
+				}
+				HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
+			})
+		});
+	}
+	var apiKey = "6u2qj2wz3rxn769s3mcztz2e";
+	var url = "http://api.foodessentials.com/createsession?uid=001&devid=001&appid=NYT_HackDay&f=json&api_key=" + apiKey;
+	if(!HD2013.sessionID) {
+		var response = $.get(url, function (data) {
+			var jsonObj = response.responseJSON;
+			var returnVal = jsonObj.session_id;
+			// console.log(returnVal);
+			HD2013.sessionID = returnVal;
+			getDetails(upc);
+		});
+	} else {
+		getDetails(upc);
+	}
 }
 
 HD2013.FoodItem = function (name,calories,url) {
@@ -55,10 +70,8 @@ HD2013.calculateDistance = function (calories,type) {
 	return distance * 1609.34; //now it's in meters :)
 }
 
-HD2013.getJSONObj("http://api.foodessentials.com/createsession?uid=001&devid=001&appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e","session_id");
-
 HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
-	var apiKey = "1f26f178792c1bc75bd269b3af192b86:7:56579220"
+	var apiKey = "1f26f178792c1bc75bd269b3af192b86:7:56579220";
 	var dateRange;
 	var url = "http://api.nytimes.com/svc/events/v2/listings.json?";
 	if (start && end) {
@@ -96,19 +109,15 @@ function initialize() {
     zoom: 15,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   // Try HTML5 geolocation
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      var lat_init=position.coords.latitude;
+      var lat_init = position.coords.latitude;
       var lon_init= position.coords.longitude;
       var initial_loc = new google.maps.LatLng(lat_init, lon_init);
-
-
       add_event_marker("Your current location",lat_init, lon_init);
-
       map.setCenter(initial_loc);
       geocode_addr("The New Yorker", "4 Times Square", "New York, NY", lat_init, lon_init);
       console.log(initial_loc);
@@ -211,7 +220,8 @@ $(function() {
 	$("#submit-button").click( function (e) {
 		if (HD2013.loading === 0) {
 			var search = $("#search-box").val();
-			var searchString = search;
+			var upc = $("#bar-code").val();
+			var addressString = search;
 			var moreOptions = $('.more-options');
 			if (moreOptions.hasClass("active")) {
 				var startDate = $('#start-date');
@@ -240,17 +250,17 @@ $(function() {
 
 			// console.log(options);
 
-			if (search === "") {
-				$("#search-box").val("Please enter something to search");
-			} else if (searchString === "Please enter something to search") {
+			if (upc === "") {
+				alert("Please enter a UPC code.");
+			} else if (upc === "UPC code") {
 				//do nothing
 			} else {
 				try {
 					//perform a search.
-					
+					console.log(upc);
+					HD2013.getFoodInfo(upc);
 				} catch(err) {
 					console.warn(err);
-					$('.search-contain img').remove();
 					$('.results-area').html(HD2013.errorText).append("<p>" + err.toString() + "</p>");
 
 				}
