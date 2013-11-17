@@ -89,28 +89,33 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 }
 
 HD2013.getEvents(1700,40.756146,-73.99021);
-
+var lat_init;
+var lon_init;
 var map;
 function initialize() {
   var mapOptions = {
     zoom: 15,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  map = new google.maps.Map(document.getElementById('map-canvas'),
-      mapOptions);
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   // Try HTML5 geolocation
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      var lat_init=position.coords.latitude;
-      var lon_init= position.coords.longitude;
+      lat_init=position.coords.latitude;
+      lon_init= position.coords.longitude;
       var initial_loc = new google.maps.LatLng(lat_init, lon_init);
-
+      var marker = new google.maps.Marker({
+       position: new google.maps.LatLng(lat_init, lon_init),
+       map: map
+      });
 
       add_event_marker("Your current location",lat_init, lon_init);
 
       map.setCenter(initial_loc);
-      geocode_addr("The New Yorker", "4 Times Square", "New York, NY", lat_init, lon_init);
+      geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
+      geocode_addr("10 Columbus Circle New York, NY", lat_init, lon_init);
+
       console.log(initial_loc);
     }, function() {
       handleNoGeolocation(true);
@@ -122,28 +127,25 @@ function initialize() {
 }
 //console.log(initial_loc);
 function handleNoGeolocation(errorFlag) {
-  if (errorFlag) {
-   // var content = 'Error: The Geolocation service failed.';
-  } else {
-   // var content = 'Error: Your browser doesn\'t support geolocation.';
-  }
    var lat_init=40.69847032728747;
    var lon_init=73.9514422416687;
    var options = {
      map: map,
      position: new google.maps.LatLng(lat_init, lon_init)
    };
-     add_event_marker("Your current location",lat_init, lon_init);
+     add_event_marker(lat_init, lon_init);
   // var infowindow = new google.maps.InfoWindow(options);
   initial_loc=options.position;
   map.setCenter(initial_loc);
-  geocode_addr("The New Yorker", "4 Times Square", "New York, NY", lat_init, lon_init);
+  geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
+  geocode_addr("10 Columbus Circle New York, NY", lat_init, lon_init);
+
 
 
 }
-
-function geocode_addr(event_title,street_addr, city_state, lat_init, lon_init){
- var geocode_obj= $.getJSON("http://maps.googleapis.com/maps/api/geocode/json?address="+street_addr+","+city_state+"&sensor=true", function(data){
+// geocodes the address and adds markers and directions of the locations
+function geocode_addr(event_addr){
+ var geocode_obj= $.getJSON("http://maps.googleapis.com/maps/api/geocode/json?address="+event_addr+"&sensor=true", function(data){
     //var geocode_obj=data;
    //  var lat=data. 
     console.log(data);
@@ -151,26 +153,47 @@ function geocode_addr(event_title,street_addr, city_state, lat_init, lon_init){
     var lon=data.results[0].geometry.location.lng;
     console.log(lat);
     console.log(lon);
-    add_event_marker(event_title,lat, lon);
-    add_directions_duration(lat,lon, lat_init, lon_init);
+    add_event_marker(lat, lon);
+    add_directions(lat,lon, lat_init, lon_init);
     //  return data;
   });
 }
 
 
-function add_event_marker(event_title, lat, lon){
+function add_event_marker(lat, lon){
 
   var marker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lon),
-    map: map,
-    title: event_title
+    map: map
 });
+
+   google.maps.event.addListener(marker, 'click', function() {
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+    var directionsService = new google.maps.DirectionsService();
+    var request = {
+        origin: new google.maps.LatLng(lat_init, lon_init),
+        destination: new google.maps.LatLng(lat, lon),
+        travelMode: google.maps.TravelMode.WALKING,
+       unitSystem: google.maps.UnitSystem.IMPERIAL
+    };
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+
+        directionsDisplay.setDirections(response);
+
+      }
+    });
+   });
 
   marker.setMap(map);
 }
   // add estimated time it takes to get to neighborhood, using Gmaps transit locations
   // appends to .duration class selector div
-  function add_directions_duration(lat, lon, lat_init, lon_init) {
+
+  function add_directions(lat, lon) {
+   // directionsDisplay = new google.maps.DirectionsRenderer();
+   // directionsDisplay.setMap(map);
     var directionsService = new google.maps.DirectionsService();
     var destinationMarker= new google.maps.LatLng(lat, lon);
     var request = {
@@ -185,9 +208,33 @@ function add_event_marker(event_title, lat, lon){
 
         var distance = response.routes[0].legs[0].distance.text;
         console.log(distance);
+      //  directionsDisplay.setDirections(response);
+      }
+    });
+  }
+
+
+  function draw_directions(destinationMarker){
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+    var directionsService = new google.maps.DirectionsService();
+    var request = {
+        origin: new google.maps.LatLng(lat_init, lon_init),
+        destination: destinationMarker,
+        travelMode: google.maps.TravelMode.WALKING,
+       unitSystem: google.maps.UnitSystem.IMPERIAL
+    };
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+       // console.log(response);
+
+       // var distance = response.routes[0].legs[0].distance.text;
+      //  console.log(distance);
+        directionsDisplay.setDirections(response);
        // $(".duration").append(response.routes[0].legs[0].duration.text);
       }
     });
+
   }
   
 
