@@ -9,7 +9,6 @@ HD2013.getFoodInfo = function (upc) {
 		http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
 		var url = "http://api.foodessentials.com/label_summary?u=" + upc + "&sid=" + sessionID + "&appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
 		var response = $.get(url, function (data) {
-			// console.log(url);
 			console.log(url);
 			console.log(data);
 			var jsonObj = response.responseJSON;
@@ -27,6 +26,12 @@ HD2013.getFoodInfo = function (upc) {
 					calorieCount = parseInt(calorieCount);
 				}
 				HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
+
+				var lastIndex = HD2013.foodItemList.length - 1;
+				var distance = HD2013.getDistanceInMeters(HD2013.foodItemList[lastIndex],"walk");
+				
+
+
 			})
 		});
 	}
