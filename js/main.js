@@ -64,6 +64,16 @@ HD2013.Event = function (name,url,lat,lng,tel,desc) {
 	this.desc = desc;
 }
 
+HD2013.Event.prototype.toHTML = function () {
+	var htmlString = "<div class='event'>";
+	htmlString += "<a href='" + this.url + "'>"
+	htmlString += "<h3>" + this.name + "</h3>";
+	htmlString += "</a><p>" + this.desc + "<br>";
+	htmlString += this.tel + "</p></div>";
+
+	return htmlString;
+}
+
 HD2013.calculateDistance = function (foodItem,type) {
 	var calories = foodItem.calories;
 	var distance;
