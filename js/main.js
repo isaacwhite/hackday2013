@@ -1,6 +1,7 @@
 var HD2013 = {};
 HD2013.foodItemList = [];
 HD2013.loading = 0;
+HD2013.startCoord = {};
 
 HD2013.getFoodInfo = function (upc) {
 	function getDetails(upc) {
@@ -9,7 +10,6 @@ HD2013.getFoodInfo = function (upc) {
 		http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
 		var url = "http://api.foodessentials.com/label_summary?u=" + upc + "&sid=" + sessionID + "&appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
 		var response = $.get(url, function (data) {
-			// console.log(url);
 			console.log(url);
 			console.log(data);
 			var jsonObj = response.responseJSON;
@@ -27,6 +27,10 @@ HD2013.getFoodInfo = function (upc) {
 					calorieCount = parseInt(calorieCount);
 				}
 				HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
+
+				var lastIndex = HD2013.foodItemList.length - 1;
+				var distanceArray = HD2013.calculateDistance(HD2013.foodItemList[lastIndex],"walk");
+				HD2013.getEvents(distanceArray,HD2013.startCoord.lat,HD2013.startCoord.lon);
 			})
 		});
 	}
@@ -60,50 +64,78 @@ HD2013.Event = function (name,url,lat,lng,tel,desc) {
 	this.desc = desc;
 }
 
-HD2013.calculateDistance = function (calories,type) {
+HD2013.calculateDistance = function (foodItem,type) {
+	var calories = foodItem.calories;
 	var distance;
+	var safeDistance;
+	var weightInPounds = 160;
+	var milesToMeters = 1609.34
 	if (type === "walk") {
-		distance = calories / (.57 * 160);
+		distance = calories / (.57 * weightInPounds);
+		safeDistance = distance + (20 / (.57 * weightInPounds));
 	} else {
-		distance = calories / (.72 * 160);
+		distance = calories / (.72 * weightInPounds);
+		safeDistance = distance + (20 / (.57 * weightInPounds));
 	}
-	return distance * 1609.34; //now it's in meters :)
+
+	distance = distance * milesToMeters;
+	safeDistance = safeDistance * milesToMeters; //now it's in meters :)
+
+	return [distance,safeDistance];
 }
 
 HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
+	// console.log(distanceInMeters);
+	var distance = distanceInMeters[0];
+	var safeDistance = distanceInMeters[1];
 	var apiKey = "1f26f178792c1bc75bd269b3af192b86:7:56579220";
 	var dateRange;
-	var url = "http://api.nytimes.com/svc/events/v2/listings.json?";
+	var url1 = "http://api.nytimes.com/svc/events/v2/listings.json?";
+	var url2;
 	if (start && end) {
 		dateRange = "&date_range" + start + "%3A" + end;
-		url += dateRange;
+		url1 += dateRange;
 	}
-	url += "&ll=" + startLat + "%2C" + startLng + "&radius=" + distanceInMeters + "&api-key=" + apiKey;
+	url1 += "&ll=" + startLat + "%2C" + startLng + "&radius=";
+	url2 = url1;
+
+	url1+= distance + "&api-key=" + apiKey;
+	url2+= safeDistance + "&api-key=" + apiKey;
 
 	var currentEvents = [];
-	var response = $.get(url, function (data) {
+	var response = $.get(url1, function (data) {
 		var jsonObj = response.responseJSON;
 		var results = jsonObj.results;
+		var tooClose = [];
 		for (var i = 0; i< results.length; i++) {
 			var thisResult = results[i];
-
 			var name = thisResult.event_name;
-			var url = thisResult.event_detail_url;
-			var lat = thisResult.geocode_latitude;
-			var lng = thisResult.geocode_longitude;
-			var tel = thisResult.telephone;
-			var desc = thisResult.web_description;
-
-			var eventObj = new HD2013.Event(name,url,lat,lng,tel,desc);
-			currentEvents.push(eventObj);
+			tooClose.push(name);
 		}
-		HD2013.currentEvents = currentEvents;
+		$.get(url2, function (data) {
+			jsonObj = response.responseJSON;
+			results = jsonObj.results;
+			for (var i = 0; i< results.length; i++) {
+				var thisResult = results[i];
+				var name = thisResult.event_name;
+				if (tooClose.indexOf(name) !== -1) {
+					var url = thisResult.event_detail_url;
+					var lat = thisResult.geocode_latitude;
+					var lng = thisResult.geocode_longitude;
+					var tel = thisResult.telephone;
+					var desc = thisResult.web_description;
+
+					var eventObj = new HD2013.Event(name,url,lat,lng,tel,desc);
+					currentEvents.push(eventObj);
+				}
+			}
+			HD2013.currentEvents = currentEvents;
+			console.log(currentEvents);
+		});
 	});
 }
 
 HD2013.getEvents(1700,40.756146,-73.99021);
-var lat_init;
-var lon_init;
 var map;
 HD2013.markerList = [];
 directionsDisplay = new google.maps.DirectionsRenderer();
@@ -118,18 +150,24 @@ function initialize() {
   // Try HTML5 geolocation
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      lat_init=position.coords.latitude;
-      lon_init= position.coords.longitude;
-      var initial_loc = new google.maps.LatLng(lat_init, lon_init);
+      HD2013.startCoord.lat=position.coords.latitude;
+      HD2013.startCoord.lon= position.coords.longitude;
+      var initial_loc = new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon);
       var marker = new google.maps.Marker({
-       position: new google.maps.LatLng(lat_init, lon_init),
+       position: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
        map: map
       });
+<<<<<<< HEAD
       HD2013.markerList.push(marker);
       add_event_marker("Your current location",lat_init, lon_init);
+=======
+
+
+      add_event_marker("Your current location",HD2013.startCoord.lat, HD2013.startCoord.lon);
+>>>>>>> 6532899bbde6632953f28a46e3be29c53f98c985
       map.setCenter(initial_loc);
-      geocode_addr("4 Times Square New York, NY", lat_init, lon_init);
-      geocode_addr("10 Columbus Circle New York, NY", lat_init, lon_init);
+      geocode_addr("4 Times Square New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
+      geocode_addr("10 Columbus Circle New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
 
       console.log(initial_loc);
     }, function() {
@@ -212,7 +250,7 @@ function add_event_marker(lat, lon){
     var directionsService = new google.maps.DirectionsService();
     var destinationMarker= new google.maps.LatLng(lat, lon);
     var request = {
-        origin: new google.maps.LatLng(lat_init, lon_init),
+        origin: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
         destination: new google.maps.LatLng(lat,lon),
         travelMode: google.maps.TravelMode.WALKING,
        unitSystem: google.maps.UnitSystem.IMPERIAL
@@ -228,6 +266,32 @@ function add_event_marker(lat, lon){
     });
   }
 
+
+  function draw_directions(destinationMarker){
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
+    var directionsService = new google.maps.DirectionsService();
+    var request = {
+        origin: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
+        destination: destinationMarker,
+        travelMode: google.maps.TravelMode.WALKING,
+       unitSystem: google.maps.UnitSystem.IMPERIAL
+    };
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+       // console.log(response);
+
+       // var distance = response.routes[0].legs[0].distance.text;
+      //  console.log(distance);
+        directionsDisplay.setDirections(response);
+       // $(".duration").append(response.routes[0].legs[0].duration.text);
+      }
+    });
+
+  }
+  
+
+>>>>>>> 6532899bbde6632953f28a46e3be29c53f98c985
 google.maps.event.addDomListener(window, 'load', initialize);
 
 $(function() {
