@@ -72,10 +72,10 @@ HD2013.calculateDistance = function (foodItem,type) {
 	var milesToMeters = 1609.34
 	if (type === "walk") {
 		distance = calories / (.57 * weightInPounds);
-		safeDistance = distance + (20 / (.57 * weightInPounds));
+		safeDistance = distance + (100 / (.57 * weightInPounds));
 	} else {
 		distance = calories / (.72 * weightInPounds);
-		safeDistance = distance + (20 / (.57 * weightInPounds));
+		safeDistance = distance + (100 / (.72 * weightInPounds));
 	}
 
 	distance = distance * milesToMeters;
@@ -100,34 +100,31 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	url2 = url1;
 
 	url1+= distance + "&api-key=" + apiKey;
-	url2+= safeDistance + "&api-key=" + apiKey;
+	url2+= safeDistance + "&sort=dist+asc";
 
 	var currentEvents = [];
 	var response = $.get(url1, function (data) {
+		console.log(data);
+		console.log(url1);
 		var jsonObj = response.responseJSON;
-		var results = jsonObj.results;
-		var tooClose = [];
-		for (var i = 0; i< results.length; i++) {
-			var thisResult = results[i];
-			var name = thisResult.event_name;
-			tooClose.push(name);
-		}
+		var resultCount = jsonObj.num_results;
+
+		url2 += "&offset=" + resultCount + "&api-key=" + apiKey;
 		$.get(url2, function (data) {
-			jsonObj = response.responseJSON;
+			jsonObj = data;
 			results = jsonObj.results;
+			console.log(url2);
 			for (var i = 0; i< results.length; i++) {
 				var thisResult = results[i];
 				var name = thisResult.event_name;
-				if (tooClose.indexOf(name) !== -1) {
-					var url = thisResult.event_detail_url;
-					var lat = thisResult.geocode_latitude;
-					var lng = thisResult.geocode_longitude;
-					var tel = thisResult.telephone;
-					var desc = thisResult.web_description;
+				var url = thisResult.event_detail_url;
+				var lat = thisResult.geocode_latitude;
+				var lng = thisResult.geocode_longitude;
+				var tel = thisResult.telephone;
+				var desc = thisResult.web_description;
 
-					var eventObj = new HD2013.Event(name,url,lat,lng,tel,desc);
-					currentEvents.push(eventObj);
-				}
+				var eventObj = new HD2013.Event(name,url,lat,lng,tel,desc);
+				currentEvents.push(eventObj);
 			}
 			HD2013.currentEvents = currentEvents;
 			console.log(currentEvents);
