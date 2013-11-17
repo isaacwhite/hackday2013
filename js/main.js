@@ -151,7 +151,7 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 
 function initialize() {
   var mapOptions = {
-    zoom: 15,
+    zoom: 12,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -202,6 +202,13 @@ function handleNoGeolocation(errorFlag) {
 
 }
 
+function reset_marker(eventsMarkersArray){
+  for (var j=0; j<eventsMarkersArray.length; j++){
+    directionsDisplay.setMap(eventsMarkersArray[j]);
+  }
+
+}
+
 
 // geocodes the address and adds markers and directions of the locations
 function geocode_addr(event_addr){
@@ -225,9 +232,19 @@ function add_event_marker(lat, lon, eventsObj){
     position: new google.maps.LatLng(lat, lon),
     map: map
 });
+    marker.info = new google.maps.InfoWindow({
+     map: map,
+     position: new google.maps.LatLng(lat, lon),
+     content: eventsObj.name+'<br>'+'<a href="'+eventsObj.url+'"> More info</a>'
+     });
+        marker.info.close(map, marker);
+
    google.maps.event.addListener(marker, 'click', function() {
+   // reset_marker(HD2013.markerList);
     directionsDisplay.setMap(null);
     directionsDisplay.setMap(map);
+    marker.setMap(null);
+
     var directionsService = new google.maps.DirectionsService();
     var request = {
         origin: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
@@ -235,6 +252,7 @@ function add_event_marker(lat, lon, eventsObj){
         travelMode: google.maps.TravelMode.WALKING,
        unitSystem: google.maps.UnitSystem.IMPERIAL
     };
+
     directionsService.route(request, function(response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
 
@@ -244,18 +262,20 @@ function add_event_marker(lat, lon, eventsObj){
     });
    });
 
-   google.maps.event.addListener(marker, 'hover', function() {
-     console.log("hovered");
-     var infowindow = new google.maps.InfoWindow({
-     map: map,
-     position: new google.maps.LatLng(lat, lon),
-     content: eventsObj.name+'<br>'+'<a href="'+eventsObj.url+'"> More info</a>'
-     });
+   google.maps.event.addListener(marker, 'mouseover', function() {
 
+    marker.info.open(map, marker);
+   // settimeout(marker.info.close(map, marker)
    });
 
-  
+   google.maps.event.addListener(marker, 'mouseout', function(){
+    marker.info.close(map,marker);
+   });
+
+  HD2013.markerList.push(marker);
+
   marker.setMap(map);
+
 }
   // add estimated time it takes to get to neighborhood, using Gmaps transit locations
   // appends to .duration class selector div
