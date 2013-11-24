@@ -3,56 +3,293 @@ HD2013.foodItemList = [];
 HD2013.loading = 0;
 HD2013.startCoord = {};
 
+HD2013.userPreferences = {
+    "nutrients": [{
+        "name": "Calcium",
+        "value": "false"
+    }, {
+        "name": "Calories",
+        "value": "true"
+    }, {
+        "name": "Calories from Fat",
+        "value": "false"
+    }, {
+        "name": "Cholesterol",
+        "value": "false"
+    }, {
+        "name": "Dietary Fiber",
+        "value": "false"
+    }, {
+        "name": "Insoluble Fiber",
+        "value": "false"
+    }, {
+        "name": "Iron",
+        "value": "false"
+    }, {
+        "name": "Monounsaturated Fat",
+        "value": "false"
+    }, {
+        "name": "Other Carbohydrate",
+        "value": "false"
+    }, {
+        "name": "Polyunsaturated Fat",
+        "value": "false"
+    }, {
+        "name": "Potassium",
+        "value": "false"
+    }, {
+        "name": "Protein",
+        "value": "false"
+    }, {
+        "name": "Saturated Fat",
+        "value": "false"
+    }, {
+        "name": "Saturated Fat Calories",
+        "value": "false"
+    }, {
+        "name": "Sodium",
+        "value": "false"
+    }, {
+        "name": "Soluble Fiber",
+        "value": "false"
+    }, {
+        "name": "Sugar Alcohol",
+        "value": "false"
+    }, {
+        "name": "Sugars",
+        "value": "false"
+    }, {
+        "name": "Total Carbohydrate",
+        "value": "false"
+    }, {
+        "name": "Total Fat",
+        "value": "false"
+    }, {
+        "name": "Vitamin A",
+        "value": "false"
+    }, {
+        "name": "Vitamin C",
+        "value": "false"
+    }],
+    "allergens": [{
+        "name": "Cereals",
+        "value": "false"
+    }, {
+        "name": "Coconut",
+        "value": "false"
+    }, {
+        "name": "Corn",
+        "value": "false"
+    }, {
+        "name": "Egg",
+        "value": "false"
+    }, {
+        "name": "Fish",
+        "value": "false"
+    }, {
+        "name": "Gluten",
+        "value": "false"
+    }, {
+        "name": "Lactose",
+        "value": "false"
+    }, {
+        "name": "Milk",
+        "value": "false"
+    }, {
+        "name": "Peanuts",
+        "value": "false"
+    }, {
+        "name": "Sesame Seeds",
+        "value": "false"
+    }, {
+        "name": "Shellfish",
+        "value": "false"
+    }, {
+        "name": "Soybean",
+        "value": "false"
+    }, {
+        "name": "Sulfites",
+        "value": "false"
+    }, {
+        "name": "Tree Nuts",
+        "value": "false"
+    }, {
+        "name": "Wheat",
+        "value": "false"
+    }],
+    "additives": [{
+        "name": "Acidity Regulator",
+        "value": "false"
+    }, {
+        "name": "Added Sugar",
+        "value": "false"
+    }, {
+        "name": "Anti-Caking Agents",
+        "value": "false"
+    }, {
+        "name": "Anti-Foaming Agent",
+        "value": "false"
+    }, {
+        "name": "Antioxidants",
+        "value": "false"
+    }, {
+        "name": "Artificial Color",
+        "value": "false"
+    }, {
+        "name": "Artificial Flavoring Agent",
+        "value": "false"
+    }, {
+        "name": "Artificial Preservative",
+        "value": "false"
+    }, {
+        "name": "Bulking Agents",
+        "value": "false"
+    }, {
+        "name": "Colors",
+        "value": "false"
+    }, {
+        "name": "Emulsifiers",
+        "value": "false"
+    }, {
+        "name": "Enzyme",
+        "value": "false"
+    }, {
+        "name": "Firming Agent",
+        "value": "false"
+    }, {
+        "name": "Flavor Enhancer",
+        "value": "false"
+    }, {
+        "name": "Flour Treating Agent",
+        "value": "false"
+    }, {
+        "name": "Food Acids",
+        "value": "false"
+    }, {
+        "name": "Gelling Agents",
+        "value": "false"
+    }, {
+        "name": "Glazing Agent",
+        "value": "false"
+    }, {
+        "name": "Humectants",
+        "value": "false"
+    }, {
+        "name": "Leavening Agent",
+        "value": "false"
+    }, {
+        "name": "Mineral Salt",
+        "value": "false"
+    }, {
+        "name": "Natural Color",
+        "value": "false"
+    }, {
+        "name": "Natural Flavoring Agent",
+        "value": "false"
+    }, {
+        "name": "Natural Preservative",
+        "value": "false"
+    }, {
+        "name": "Preservatives",
+        "value": "false"
+    }, {
+        "name": "Propellant",
+        "value": "false"
+    }, {
+        "name": "Raising Agents",
+        "value": "false"
+    }, {
+        "name": "Saturated Fat",
+        "value": "false"
+    }, {
+        "name": "Sequestrant",
+        "value": "false"
+    }, {
+        "name": "Stabilizers",
+        "value": "false"
+    }, {
+        "name": "Sweeteners",
+        "value": "false"
+    }, {
+        "name": "Thickeners",
+        "value": "false"
+    }, {
+        "name": "Trans Fat",
+        "value": "false"
+    }, {
+        "name": "Unsaturated Fat",
+        "value": "false"
+    }, {
+        "name": "Vegetable Gum",
+        "value": "false"
+    }],
+    "myingredients": [],
+    "mysort": [{
+        "sort_variable": "Calories",
+        "sort_order": 1,
+        "variable_type": 1
+    }]
+};
+
 HD2013.getFoodInfo = function (upc) {
+	var apiKey = "6u2qj2wz3rxn769s3mcztz2e";
 	function getDetails(upc) {
 		var sessionID = HD2013.sessionID;
-		console.log(sessionID);
-		http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
-		var url = "http://api.foodessentials.com/label_summary?u=" + upc + "&sid=" + sessionID + "&appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
-		var response = $.get(url, function (data) {
-			console.log(url);
-			console.log(data);
-			var jsonObj = response.responseJSON;
-			var foodName = jsonObj.product_name;
-			var productUrl = jsonObj.url;
-			var html = $.get(productUrl, function (data) {
-			//data is the html response
-				console.log("requesting http data");
-				HD2013.testData = data;
-				var calories = $(data).find("#label_sorting_title .center_text .right_text.tx_3")[0];
-				var calorieCount = $(calories).contents()[0]['data'];
-				if (calorieCount === "n/a") {
-					calorieCount = 0;
-				} else {
-					calorieCount = parseInt(calorieCount);
+		//we don't actually have to do this now.
+		// http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
+		var url = "http://api.foodessentials.com/productscore?u=" + upc + "&sid=" + sessionID + "&f=json&api_key=" + apiKey + "&c=?";
+		var response = $.getJSON(url, function (data) {
+			var nutrients = data.product.nutrients;
+			var calorieCount = 0;
+			var foodName = data.product.product_name;
+			var brand = data.product.brand; 
+			for (var i = 0; i< nutrients.length; i++) {
+				if (nutrients[i].nutrient_name === "Calories") {
+					calorieCount = parseInt(nutrients[i].nutrient_value);
+					i = nutrients.length; //break out of loop
 				}
-				HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
+			}
+			console.log(calorieCount);
+			HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,brand) );
 
-				var lastIndex = HD2013.foodItemList.length - 1;
-				var distanceArray = HD2013.calculateDistance(HD2013.foodItemList[lastIndex],"walk");
-				HD2013.getEvents(distanceArray,HD2013.startCoord.lat,HD2013.startCoord.lon);
-			})
+			var lastIndex = HD2013.foodItemList.length - 1;
+			var distanceArray = HD2013.calculateDistance(HD2013.foodItemList[lastIndex],"walk");
+			HD2013.getEvents(distanceArray,HD2013.startCoord.lat,HD2013.startCoord.lon);
 		});
 	}
-	var apiKey = "6u2qj2wz3rxn769s3mcztz2e";
-	var url = "http://api.foodessentials.com/createsession?uid=001&devid=001&appid=NYT_HackDay&f=json&api_key=" + apiKey;
+	var url = "http://api.foodessentials.com/createsession?uid=001&devid=001&appid=NYT_HackDay&f=json&api_key=" + apiKey + "&c=?"
+	console.log(url);
 	if(!HD2013.sessionID) {
-		var response = $.get(url, function (data) {
+		var response = $.getJSON(url, function (data) {
+			// console.log(data);
+			console.log("inside callback!");
 			var jsonObj = response.responseJSON;
 			var returnVal = jsonObj.session_id;
-			// console.log(returnVal);
+			HD2013.userPreferences.sesion_id = returnVal;
 			HD2013.sessionID = returnVal;
-			getDetails(upc);
+
+			var userPrefUrl = "http://api.foodessentials.com/setprofile?json" + JSON.stringify(HD2013.userPreferences);
+			console.log(userPrefUrl);
+			$.post(userPrefUrl).fail(function() {
+				console.log("request sent!");
+				//we don't actually care that it didn't like it, let's just see if it works.
+				getDetails(upc);
+			});
+
 		});
 	} else {
 		getDetails(upc);
 	}
 }
 
-HD2013.FoodItem = function (name,calories,url) {
+HD2013.jsonpCallback = function(data) {
+	
+}
+
+HD2013.FoodItem = function (name,calories,brand) {
 	this.name = name;
 	this.calories = calories;
-	this.url = url;
+	this.brand = brand;
 }
 
 HD2013.Event = function (name,url,lat,lng,tel,desc) {
@@ -100,7 +337,7 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	var safeDistance = distanceInMeters[1];
 	var apiKey = "1f26f178792c1bc75bd269b3af192b86:7:56579220";
 	var dateRange;
-	var url1 = "http://api.nytimes.com/svc/events/v2/listings.json?";
+	var url1 = "http://api.nytimes.com/svc/events/v2/listings.jsonp?";
 	var url2;
 	if (start && end) {
 		dateRange = "&date_range" + start + "%3A" + end;
@@ -109,21 +346,20 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	url1 += "&ll=" + startLat + "%2C" + startLng + "&radius=";
 	url2 = url1;
 
-	url1+= distance + "&api-key=" + apiKey;
+	url1+= distance + "&api-key=" + apiKey + "&callback=?";
 	url2+= safeDistance + "&sort=dist+asc";
 
 	var currentEvents = [];
-	var response = $.get(url1, function (data) {
+	var response = $.getJSON(url1, function (data) {
 		console.log(data);
 		console.log(url1);
 		var jsonObj = response.responseJSON;
 		var resultCount = jsonObj.num_results;
-
-		url2 += "&offset=" + resultCount + "&api-key=" + apiKey;
-		$.get(url2, function (data) {
+		url2 += "&offset=" + resultCount + "&api-key=" + apiKey + "&callback=?";
+		$.getJSON(url2, function (data) {
 			jsonObj = data;
 			results = jsonObj.results;
-			console.log(url2);
+			console.log(data);
 			for (var i = 0; i< results.length; i++) {
 				var thisResult = results[i];
 				var name = thisResult.event_name;
