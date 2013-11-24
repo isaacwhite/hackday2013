@@ -2,7 +2,8 @@ var HD2013 = {};
 HD2013.foodItemList = [];
 HD2013.loading = 0;
 HD2013.startCoord = {};
-
+/*
+not sure we need this anymore
 HD2013.userPreferences = {
     "nutrients": [{
         "name": "Calcium",
@@ -230,7 +231,7 @@ HD2013.userPreferences = {
         "variable_type": 1
     }]
 };
-
+*/
 HD2013.getFoodInfo = function (upc) {
 	var apiKey = "6u2qj2wz3rxn769s3mcztz2e";
 	function getDetails(upc) {
@@ -257,7 +258,7 @@ HD2013.getFoodInfo = function (upc) {
 			HD2013.getEvents(distanceArray,HD2013.startCoord.lat,HD2013.startCoord.lon);
 		});
 	}
-	var url = "http://api.foodessentials.com/createsession?uid=001&devid=001&appid=NYT_HackDay&f=json&api_key=" + apiKey + "&c=?"
+	var url = "http://api.foodessentials.com/createsession?uid=002&devid=002&appid=NYT_HackDay&f=json&api_key=" + apiKey + "&c=?"
 	console.log(url);
 	if(!HD2013.sessionID) {
 		var response = $.getJSON(url, function (data) {
@@ -265,16 +266,17 @@ HD2013.getFoodInfo = function (upc) {
 			console.log("inside callback!");
 			var jsonObj = response.responseJSON;
 			var returnVal = jsonObj.session_id;
-			HD2013.userPreferences.sesion_id = returnVal;
+			// HD2013.userPreferences.sesion_id = returnVal;
 			HD2013.sessionID = returnVal;
 
-			var userPrefUrl = "http://api.foodessentials.com/setprofile?json" + JSON.stringify(HD2013.userPreferences);
-			console.log(userPrefUrl);
-			$.post(userPrefUrl).fail(function() {
-				console.log("request sent!");
-				//we don't actually care that it didn't like it, let's just see if it works.
-				getDetails(upc);
-			});
+			// var userPrefUrl = "http://api.foodessentials.com/setprofile?json" + JSON.stringify(HD2013.userPreferences);
+			// console.log(userPrefUrl);
+			// $.post(userPrefUrl).fail(function() {
+			// 	console.log("request sent!");
+			// 	//we don't actually care that it didn't like it, let's just see if it works.
+			// 	getDetails(upc);
+			// });
+			getDetails(upc);
 
 		});
 	} else {
