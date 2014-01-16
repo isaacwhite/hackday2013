@@ -2,63 +2,135 @@ var HD2013 = {};
 HD2013.foodItemList = [];
 HD2013.loading = 0;
 HD2013.startCoord = {};
+HD2013.mapStyle= [
+    {
+        "featureType": "water",
+        "stylers": [
+            {
+                "color": "#cccccc"
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "stylers": [
+            {
+                "color": "#f2f2f2"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 45
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#444444"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    }
+];
 
 HD2013.getFoodInfo = function (upc) {
-	var apiKey = "6u2qj2wz3rxn769s3mcztz2e";
 	function getDetails(upc) {
 		var sessionID = HD2013.sessionID;
-		//we don't actually have to do this now.
-		// http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
-		var url = "http://api.foodessentials.com/productscore?u=" + upc + "&sid=" + sessionID + "&f=json&api_key=" + apiKey + "&c=?";
-		var response = $.getJSON(url, function (data) {
-			var nutrients = data.product.nutrients;
-			var calorieCount = 0;
-			var foodName = data.product.product_name;
-			var brand = data.product.brand; 
-			for (var i = 0; i< nutrients.length; i++) {
-				if (nutrients[i].nutrient_name === "Calories") {
-					calorieCount = parseInt(nutrients[i].nutrient_value);
-					i = nutrients.length; //break out of loop
+		console.log(sessionID);
+		http://api.foodessentials.com/label_summary?u=016000264601&sid=9e1f8265-e867-47d9-ab83-e26adf672ee4&appid=demoApp_01&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e
+		var url = "http://api.foodessentials.com/label_summary?u=" + upc + "&sid=" + sessionID + "&appid=NYT_HackDay&f=json&api_key=6u2qj2wz3rxn769s3mcztz2e";
+		var response = $.get(url, function (data) {
+			console.log(url);
+			console.log(data);
+			var jsonObj = response.responseJSON;
+			var foodName = jsonObj.product_name;
+			var productUrl = jsonObj.url;
+			var html = $.get(productUrl, function (data) {
+			//data is the html response
+				console.log("requesting http data");
+				HD2013.testData = data;
+				var calories = $(data).find("#label_sorting_title .center_text .right_text.tx_3")[0];
+				var calorieCount = $(calories).contents()[0]['data'];
+				if (calorieCount === "n/a") {
+					calorieCount = 0;
+				} else {
+					calorieCount = parseInt(calorieCount);
 				}
-			}
-			console.log(calorieCount);
-			HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,brand) );
+				HD2013.foodItemList.push( new HD2013.FoodItem(foodName,calorieCount,productUrl) );
 
-			var lastIndex = HD2013.foodItemList.length - 1;
-			var distanceArray = HD2013.calculateDistance(HD2013.foodItemList[lastIndex],"walk");
-			HD2013.getEvents(distanceArray,HD2013.startCoord.lat,HD2013.startCoord.lon);
+				var lastIndex = HD2013.foodItemList.length - 1;
+				var distanceArray = HD2013.calculateDistance(HD2013.foodItemList[lastIndex],"walk");
+				HD2013.getEvents(distanceArray,HD2013.startCoord.lat,HD2013.startCoord.lon);
+			})
 		});
 	}
-	var url = "http://api.foodessentials.com/createsession?uid=002&devid=002&appid=NYT_HackDay&f=json&api_key=" + apiKey + "&c=?"
-	console.log(url);
+	var apiKey = "6u2qj2wz3rxn769s3mcztz2e";
+	var url = "http://api.foodessentials.com/createsession?uid=001&devid=001&appid=NYT_HackDay&f=json&api_key=" + apiKey;
 	if(!HD2013.sessionID) {
-		var response = $.getJSON(url, function (data) {
-			// console.log(data);
-			console.log("inside callback!");
+		var response = $.get(url, function (data) {
 			var jsonObj = response.responseJSON;
 			var returnVal = jsonObj.session_id;
-			// HD2013.userPreferences.sesion_id = returnVal;
+			// console.log(returnVal);
 			HD2013.sessionID = returnVal;
-
-			// var userPrefUrl = "http://api.foodessentials.com/setprofile?json" + JSON.stringify(HD2013.userPreferences);
-			// console.log(userPrefUrl);
-			// $.post(userPrefUrl).fail(function() {
-			// 	console.log("request sent!");
-			// 	//we don't actually care that it didn't like it, let's just see if it works.
-			// 	getDetails(upc);
-			// });
 			getDetails(upc);
-
 		});
 	} else {
 		getDetails(upc);
 	}
 }
 
+<<<<<<< HEAD
 HD2013.FoodItem = function (name,calories,brand) {
+=======
+HD2013.FoodItem = function (name,calories,url) {
+>>>>>>> 5c60b870082c539aed40b27ee7c192822f801122
 	this.name = name;
 	this.calories = calories;
-	this.brand = brand;
+	this.url = url;
 }
 
 HD2013.Event = function (name,url,lat,lng,tel,desc) {
@@ -68,16 +140,6 @@ HD2013.Event = function (name,url,lat,lng,tel,desc) {
 	this.lng = lng;
 	this.tel = tel;
 	this.desc = desc;
-}
-
-HD2013.Event.prototype.toHTML = function () {
-	var htmlString = "<div class='event'>";
-	htmlString += "<a href='" + this.url + "'>"
-	htmlString += "<h3>" + this.name + "</h3>";
-	htmlString += "</a><p>" + this.desc + "<br>";
-	htmlString += this.tel + "</p></div>";
-
-	return htmlString;
 }
 
 HD2013.calculateDistance = function (foodItem,type) {
@@ -105,7 +167,7 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	var safeDistance = distanceInMeters[1];
 	var apiKey = "1f26f178792c1bc75bd269b3af192b86:7:56579220";
 	var dateRange;
-	var url1 = "http://api.nytimes.com/svc/events/v2/listings.jsonp?";
+	var url1 = "http://api.nytimes.com/svc/events/v2/listings.json?";
 	var url2;
 	if (start && end) {
 		dateRange = "&date_range" + start + "%3A" + end;
@@ -114,20 +176,21 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	url1 += "&ll=" + startLat + "%2C" + startLng + "&radius=";
 	url2 = url1;
 
-	url1+= distance + "&api-key=" + apiKey + "&callback=?";
+	url1+= distance + "&api-key=" + apiKey;
 	url2+= safeDistance + "&sort=dist+asc";
 
 	var currentEvents = [];
-	var response = $.getJSON(url1, function (data) {
+	var response = $.get(url1, function (data) {
 		console.log(data);
 		console.log(url1);
 		var jsonObj = response.responseJSON;
 		var resultCount = jsonObj.num_results;
-		url2 += "&offset=" + resultCount + "&api-key=" + apiKey + "&callback=?";
-		$.getJSON(url2, function (data) {
+
+		url2 += "&offset=" + resultCount + "&api-key=" + apiKey;
+		$.get(url2, function (data) {
 			jsonObj = data;
 			results = jsonObj.results;
-			console.log(data);
+			console.log(url2);
 			for (var i = 0; i< results.length; i++) {
 				var thisResult = results[i];
 				var name = thisResult.event_name;
@@ -156,7 +219,8 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 function initialize() {
   var mapOptions = {
     zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    styles: HD2013.mapStyle
   };
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
