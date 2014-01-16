@@ -123,7 +123,6 @@ HD2013.getFoodInfo = function (upc) {
 	}
 }
 
-
 HD2013.FoodItem = function (name,calories,url) {
 	this.name = name;
 	this.calories = calories;
