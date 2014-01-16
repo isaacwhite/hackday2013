@@ -2,6 +2,80 @@ var HD2013 = {};
 HD2013.foodItemList = [];
 HD2013.loading = 0;
 HD2013.startCoord = {};
+HD2013.mapStyle= [
+    {
+        "featureType": "water",
+        "stylers": [
+            {
+                "color": "#cccccc"
+            },
+            {
+                "visibility": "on"
+            }
+        ]
+    },
+    {
+        "featureType": "landscape",
+        "stylers": [
+            {
+                "color": "#f2f2f2"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "stylers": [
+            {
+                "saturation": -100
+            },
+            {
+                "lightness": 45
+            }
+        ]
+    },
+    {
+        "featureType": "road.highway",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            }
+        ]
+    },
+    {
+        "featureType": "road.arterial",
+        "elementType": "labels.icon",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "administrative",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "color": "#444444"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    }
+];
 
 HD2013.getFoodInfo = function (upc) {
 	function getDetails(upc) {
@@ -142,7 +216,8 @@ directionsDisplay = new google.maps.DirectionsRenderer();
 function initialize() {
   var mapOptions = {
     zoom: 12,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    styles: HD2013.mapStyle
   };
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
