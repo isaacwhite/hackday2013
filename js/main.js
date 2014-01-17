@@ -2,7 +2,7 @@ var HD2013 = {};
 HD2013.foodItemList = [];
 HD2013.loading = 0;
 HD2013.startCoord = {};
-HD2013.mapStyle= [
+HD2013.mapStyle = [
     {
         "featureType": "water",
         "stylers": [
@@ -123,11 +123,7 @@ HD2013.getFoodInfo = function (upc) {
 	}
 }
 
-<<<<<<< HEAD
-HD2013.FoodItem = function (name,calories,brand) {
-=======
 HD2013.FoodItem = function (name,calories,url) {
->>>>>>> 5c60b870082c539aed40b27ee7c192822f801122
 	this.name = name;
 	this.calories = calories;
 	this.url = url;
@@ -147,7 +143,7 @@ HD2013.calculateDistance = function (foodItem,type) {
 	var distance;
 	var safeDistance;
 	var weightInPounds = 160;
-	var milesToMeters = 1609.34
+	var milesToMeters = 1609.34;
 	if (type === "walk") {
 		distance = calories / (.57 * weightInPounds);
 		safeDistance = distance + (100 / (.57 * weightInPounds));
@@ -155,7 +151,6 @@ HD2013.calculateDistance = function (foodItem,type) {
 		distance = calories / (.72 * weightInPounds);
 		safeDistance = distance + (100 / (.72 * weightInPounds));
 	}
-
 	distance = distance * milesToMeters;
 	safeDistance = safeDistance * milesToMeters; //now it's in meters :)
 
@@ -176,8 +171,8 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 	url1 += "&ll=" + startLat + "%2C" + startLng + "&radius=";
 	url2 = url1;
 
-	url1+= distance + "&api-key=" + apiKey;
-	url2+= safeDistance + "&sort=dist+asc";
+	url1 += distance + "&api-key=" + apiKey;
+	url2 += safeDistance + "&sort=dist+asc";
 
 	var currentEvents = [];
 	var response = $.get(url1, function (data) {
@@ -191,7 +186,7 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 			jsonObj = data;
 			results = jsonObj.results;
 			console.log(url2);
-			for (var i = 0; i< results.length; i++) {
+			for (var i = 0; i < results.length; i++) {
 				var thisResult = results[i];
 				var name = thisResult.event_name;
 
@@ -212,7 +207,7 @@ HD2013.getEvents = function (distanceInMeters,startLat,startLng,start,end) {
 }
 
 HD2013.getEvents(1700,40.756146,-73.99021);
-var map;
+HD2013.map;
 HD2013.markerList = [];
 directionsDisplay = new google.maps.DirectionsRenderer();
 
@@ -222,22 +217,22 @@ function initialize() {
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     styles: HD2013.mapStyle
   };
-  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  HD2013.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   // Try HTML5 geolocation
   if(navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      HD2013.startCoord.lat=position.coords.latitude;
-      HD2013.startCoord.lon= position.coords.longitude;
+      HD2013.startCoord.lat = position.coords.latitude;
+      HD2013.startCoord.lon = position.coords.longitude;
       var initial_loc = new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon);
       var marker = new google.maps.Marker({
        position: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
-       map: map
+       map: HD2013.map
       });
       HD2013.markerList.push(marker);
 
-      add_event_marker("Your current location",HD2013.startCoord.lat, HD2013.startCoord.lon);
-      map.setCenter(initial_loc);
+      add_event_marker("Your current location", HD2013.startCoord.lat, HD2013.startCoord.lon);
+      HD2013.map.setCenter(initial_loc);
   //    geocode_addr("4 Times Square New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
   //    geocode_addr("10 Columbus Circle New York, NY", HD2013.startCoord.lat, HD2013.startCoord.lon);
 
@@ -255,7 +250,7 @@ function handleNoGeolocation(errorFlag) {
    var lat_init=40.69847032728747;
    var lon_init=73.9514422416687;
    var options = {
-     map: map,
+     map: HD2013.map,
      position: new google.maps.LatLng(lat_init, lon_init)
    };
      add_event_marker(lat_init, lon_init);
@@ -298,19 +293,19 @@ function geocode_addr(event_addr){
 function add_event_marker(lat, lon, eventsObj){
   var marker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lon),
-    map: map
+    map: HD2013.map
 });
     marker.info = new google.maps.InfoWindow({
-     map: map,
+     map: HD2013.map,
      position: new google.maps.LatLng(lat, lon),
      content: eventsObj.name+'<br>'+'<a href="'+eventsObj.url+'"> More info</a>'
      });
-        marker.info.close(map, marker);
+        marker.info.close(HD2013.map, marker);
 
    google.maps.event.addListener(marker, 'click', function() {
    // reset_marker(HD2013.markerList);
     directionsDisplay.setMap(null);
-    directionsDisplay.setMap(map);
+    directionsDisplay.setMap(HD2013.map);
     marker.setMap(null);
 
     var directionsService = new google.maps.DirectionsService();
@@ -332,17 +327,17 @@ function add_event_marker(lat, lon, eventsObj){
 
    google.maps.event.addListener(marker, 'mouseover', function() {
 
-    marker.info.open(map, marker);
+    marker.info.open(HD2013.map, marker);
    // settimeout(marker.info.close(map, marker)
    });
 
    google.maps.event.addListener(marker, 'mouseout', function(){
-    marker.info.close(map,marker);
+    marker.info.close(HD2013.map,marker);
    });
 
   HD2013.markerList.push(marker);
 
-  marker.setMap(map);
+  marker.setMap(HD2013.map);
 
 }
   // add estimated time it takes to get to neighborhood, using Gmaps transit locations
@@ -373,7 +368,7 @@ function add_event_marker(lat, lon, eventsObj){
 
   function draw_directions(destinationMarker){
     directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(map);
+    directionsDisplay.setMap(HD2013.map);
     var directionsService = new google.maps.DirectionsService();
     var request = {
         origin: new google.maps.LatLng(HD2013.startCoord.lat, HD2013.startCoord.lon),
@@ -407,18 +402,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 $(function() {
 
-	$("#search-box").val("Your location");
-	$("#bar-code").val("UPC code");
-	$("#bar-code").click(function() {
-		if ($(this).val() === "UPC code") { 
-			$(this).val(""); 
-		} 
-	});
-	$("#search-box").click(function() {
-		if ($(this).val() === "Your location") { 
-			$(this).val(""); 
-		} 
-	});
 
 	$("#submit-button").click( function (e) {
 		if (HD2013.loading === 0) {
@@ -446,20 +429,11 @@ $(function() {
 
 				search += addQuery;
 
-			};//no else
-			
-			// options.q = search;
-			// options.count = 50;
-
-			// console.log(options);
-
+			};
 			if (upc === "") {
 				alert("Please enter a UPC code.");
-			} else if (upc === "UPC code") {
-				//do nothing
 			} else {
 				try {
-					//perform a search.
 					console.log(upc);
 					HD2013.getFoodInfo(upc);
 				} catch(err) {
