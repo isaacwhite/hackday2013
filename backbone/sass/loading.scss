@@ -1,0 +1,11 @@
+@import 'partials/base';
+
+.loader {
+	margin: 0 auto;
+	text-align: center;
+	padding-top: 4rem;
+	max-width: 40rem;
+	font-size: 5rem;
+	color: $gray;
+	@include webfont(gotham,bold,italic);
+}

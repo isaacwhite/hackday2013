@@ -1,0 +1,35 @@
+@mixin webfont($family,$weight,$italic) {
+	@if $family == gotham  {
+		font-family: 'Gotham SSm A', 'Gotham SSm B';
+	} @else {
+		font-family: 'Mercury SSm A', 'Mercury SSm B', georgia, serif;
+	}
+	@if $weight == extraLight {
+		font-weight: 200;
+	}
+	@if $weight == light {
+		font-weight: 300;
+	}
+	@if $weight == book {
+		font-weight: 400;
+	}
+	@if $weight == medium {
+		font-weight: 500;
+	}
+	//not applicable with gotham
+	@if $weight == semibold {
+		font-weight: 600;
+	}
+	@if $weight == bold {
+		font-weight: 700;
+	}
+	//not applicable with mercury
+	@if $weight == black {
+		font-weight: 800;
+	}
+	@if $italic == italic {
+		font-style: italic;
+	} @else {
+		font-style: normal;
+	}
+}

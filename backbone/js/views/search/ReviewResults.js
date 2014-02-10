@@ -2,7 +2,7 @@ define([
 	'jquery',
 	'underscore',
 	'backbone',
-	'text!templates/search/resultsTemplate.html'
+	'text!/templates/search/resultsTemplate.html'
 ], function ($, _, Backbone, searchTemplate){
 	var HomeView = Backbone.View.extend({
 		el: $('#page'),
