@@ -1,31 +1,31 @@
-/* line 6, ../sass/partials/_base.scss */
+/* line 6, ../../sass/partials/_base.scss */
 body {
   background-color: #fbfbfb;
   color: #0a0b0b;
 }
 
-/* line 12, ../sass/partials/_base.scss */
+/* line 12, ../../sass/partials/_base.scss */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Gotham SSm A', 'Gotham SSm B';
   font-weight: 800;
   font-style: normal;
 }
 
-/* line 16, ../sass/partials/_base.scss */
+/* line 16, ../../sass/partials/_base.scss */
 p, span {
   font-family: 'Mercury SSm A', 'Mercury SSm B', georgia, serif;
   font-weight: 400;
   font-style: normal;
 }
 
-/* line 20, ../sass/partials/_base.scss */
+/* line 20, ../../sass/partials/_base.scss */
 header {
   padding: .5rem 2rem;
   border-bottom: 1px solid #c8dcdc;
   overflow: hidden;
   *zoom: 1;
 }
-/* line 23, ../sass/partials/_base.scss */
+/* line 23, ../../sass/partials/_base.scss */
 header h2 {
   font-family: 'Gotham SSm A', 'Gotham SSm B';
   font-weight: 500;
@@ -36,7 +36,7 @@ header h2 {
   display: block;
   margin: 0;
 }
-/* line 31, ../sass/partials/_base.scss */
+/* line 31, ../../sass/partials/_base.scss */
 header img {
   max-height: 3rem;
   opacity: 1;
@@ -45,16 +45,15 @@ header img {
   margin-right: 1rem;
 }
 
-/* line 3, ../sass/loading.scss */
-.loader {
-  margin: 0 auto;
-  text-align: center;
-  padding-top: 4rem;
+/* line 3, ../../sass/search/barcode.scss */
+.main {
+  border: none;
   max-width: 40rem;
-  font-size: 5rem;
-  color: #c8dcdc;
-  text-transform: lowercase;
-  font-family: 'Gotham SSm A', 'Gotham SSm B';
-  font-weight: 400;
-  font-style: normal;
+}
+
+/* line 8, ../../sass/search/barcode.scss */
+.form {
+  margin-top: 1rem;
+  border: 1px solid #c8dcdc;
+  padding: 1rem;
 }

@@ -11,21 +11,23 @@ define([
 	var HomeView = Backbone.View.extend({
 		el: $('#page'),
 		render: function() {
-			var contentWidth, leftPos, topDistance;
-			topDistance = 8 * 16;
+			var contentWidth, leftPos, topDistance,fontBase;
+			fontBase = 16;
+			topDistance = 8 * fontBase;
 			this.$el.html(homeTemplate);
-			//html has been added. Calculate.
-
+			
+			//html has been added. Calculate/animate
 			contentWidth = $('.main').outerWidth();
 			leftPos = $('.main').offset().left;
 			$('.head-image').css({
 				left:leftPos,
-				top: 16,
-				height: topDistance - 16,
+				top: fontBase,
+				height: topDistance - fontBase,
 				width: 'auto'
 			}).animate({
 				opacity: 1,
 			},750);
+
 			$('#page').animate({
 				'padding-top': '8rem'
 			},750,addBloomberg);

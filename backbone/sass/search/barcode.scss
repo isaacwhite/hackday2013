@@ -1,0 +1,14 @@
+@import '../partials/base';
+
+.main {
+	border: none;
+	max-width: 40rem;
+}
+
+.form {
+	margin-top: 1rem;
+	border: 1px solid $gray;
+	padding: 1rem;
+	input {
+	}
+}

@@ -3,6 +3,11 @@
 
 #page {
 	padding-top: 2rem;
+	&>img {
+		z-index: 1;
+		opacity: 0;
+		position: absolute;
+	}
 }
 .main {
 	max-width: 37rem;
@@ -13,12 +18,6 @@
 	position: relative;
 	z-index: 2;
 }
-.head-image {
-	z-index: 1;
-	opacity: 0;
-	position: absolute;
-}
-
 .enter{
 	text-align: center;
 	a {
@@ -27,7 +26,7 @@
 		display: inline-block;
 		border: 1px solid $gray;
 		&:hover {
-			background-color: $black;
+			border: 1px solid $black;
 		}
 	}
 }
