@@ -1,0 +1,32 @@
+//variables
+@import '../partials/base';
+
+#page {
+	padding-top: 2rem;
+	&>img {
+		z-index: 1;
+		opacity: 0;
+		position: absolute;
+	}
+}
+.main {
+	max-width: 37rem;
+	background-color: $white;
+	margin: 0 auto;
+	border: 1px solid $gray;
+	padding: 2rem;
+	position: relative;
+	z-index: 2;
+}
+.enter{
+	text-align: center;
+	a {
+		margin: 1rem auto 1rem;
+		padding: 1rem;
+		display: inline-block;
+		border: 1px solid $gray;
+		&:hover {
+			border: 1px solid $black;
+		}
+	}
+}

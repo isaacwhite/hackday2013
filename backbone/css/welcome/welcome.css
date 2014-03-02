@@ -1,0 +1,84 @@
+/* line 6, ../../sass/partials/_base.scss */
+body {
+  background-color: #fbfbfb;
+  color: #0a0b0b;
+}
+
+/* line 12, ../../sass/partials/_base.scss */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Gotham SSm A', 'Gotham SSm B';
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* line 16, ../../sass/partials/_base.scss */
+p, span {
+  font-family: 'Mercury SSm A', 'Mercury SSm B', georgia, serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* line 20, ../../sass/partials/_base.scss */
+header {
+  padding: .5rem 2rem;
+  border-bottom: 1px solid #c8dcdc;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 23, ../../sass/partials/_base.scss */
+header h2 {
+  font-family: 'Gotham SSm A', 'Gotham SSm B';
+  font-weight: 500;
+  font-style: normal;
+  font-size: 1.25rem;
+  line-height: 3rem;
+  float: left;
+  display: block;
+  margin: 0;
+}
+/* line 31, ../../sass/partials/_base.scss */
+header img {
+  max-height: 3rem;
+  opacity: 1;
+  float: left;
+  width: auto;
+  margin-right: 1rem;
+}
+
+/* line 4, ../../sass/welcome/welcome.scss */
+#page {
+  padding-top: 2rem;
+}
+/* line 6, ../../sass/welcome/welcome.scss */
+#page > img {
+  z-index: 1;
+  opacity: 0;
+  position: absolute;
+}
+
+/* line 12, ../../sass/welcome/welcome.scss */
+.main {
+  max-width: 37rem;
+  background-color: #fbfbfb;
+  margin: 0 auto;
+  border: 1px solid #c8dcdc;
+  padding: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* line 21, ../../sass/welcome/welcome.scss */
+.enter {
+  text-align: center;
+}
+/* line 23, ../../sass/welcome/welcome.scss */
+.enter a {
+  margin: 1rem auto 1rem;
+  padding: 1rem;
+  display: inline-block;
+  border: 1px solid #c8dcdc;
+}
+/* line 28, ../../sass/welcome/welcome.scss */
+.enter a:hover {
+  border: 1px solid #0a0b0b;
+}

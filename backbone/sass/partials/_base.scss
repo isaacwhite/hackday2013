@@ -1,0 +1,40 @@
+@import "vars";
+@import "mixins";
+@import "compass/css3/border-radius";
+@import "compass/utilities/general/clearfix";
+
+body {
+	background-color: $white;
+	color: $black;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+	@include webfont(gotham,black,normal);
+}
+
+p, span {
+	@include webfont(mercury,book,normal);
+}
+
+header {
+	padding: .5rem 2rem;
+	border-bottom: 1px solid $gray;
+	h2 {
+		@include webfont(gotham,medium,nomal);
+		font-size: 1.25rem;
+		line-height: 3rem;
+		float: left;
+		display:block;
+		margin: 0
+	}
+	img {
+		max-height: 3rem;
+		opacity: 1;
+		float:left;
+		width: auto;
+		margin-right: 1rem;
+	}
+	@include clearfix;
+}
+
